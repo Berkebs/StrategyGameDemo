@@ -45,7 +45,7 @@ public class GridMap<TGridObject>
             {
                 for (int y = 0; y < gridArray.GetLength(1); y++)
                 {
-                     debugTextArray[x,y] = CreateWorldText(gridArray[x , y].ToString(),null,GetWorldPosition(x,y)+new Vector3(cellSize,cellSize)*.5f,20,Color.white,TextAnchor.MiddleCenter);
+                     debugTextArray[x,y] = CreateWorldText(gridArray[x , y].ToString(),null, GetGridCenterPosition(x,y), 20,Color.white,TextAnchor.MiddleCenter);
                      Debug.DrawLine(GetWorldPosition(x,y),GetWorldPosition(x,y+1), Color.white, 1000f);
                      Debug.DrawLine(GetWorldPosition(x,y),GetWorldPosition(x+1,y),Color.white,1000f);
                 }
@@ -79,6 +79,11 @@ public class GridMap<TGridObject>
     private Vector3 GetWorldPosition(int x, int y)
     {
         return new Vector3(x,y) * cellSize+originPosition;
+    }
+
+    public Vector3 GetGridCenterPosition(int x,int y)
+    {
+        return GetWorldPosition(x,y) + new Vector3(cellSize, cellSize) * .5f;
     }
 
     public void GetXY(Vector3 worldPosition,out int x,out int y) 

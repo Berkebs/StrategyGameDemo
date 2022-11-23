@@ -10,7 +10,7 @@ public class Pathfinding
 
     public static Pathfinding Instance { get; private set; }
 
-    private GridMap<PathNode> grid;
+    public GridMap<PathNode> grid;
     private List<PathNode> openList;
     private List<PathNode> closedList;
     public Pathfinding(int width,int height) 
@@ -136,6 +136,7 @@ public class Pathfinding
     {
         return grid.GetGridObject(x,y);
     }
+
 
     private List<PathNode> CalculatePath(PathNode endNode) 
     {

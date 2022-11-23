@@ -6,6 +6,8 @@ public class Testing : MonoBehaviour
 {
     private Pathfinding pathfinding;
     [SerializeField] private Soldier Soldier;
+
+    public GameObject Barracks;
     private void Start()
     {
         pathfinding = new Pathfinding(10,10);
@@ -32,7 +34,9 @@ public class Testing : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             Vector3 mouseWorldPosition = GetMouseWorldPosition();
-            pathfinding.GetGrid().GetXY(mouseWorldPosition,out int x,out int y);
+            pathfinding.GetGrid().GetXY(mouseWorldPosition, out int x, out int y);
+
+            Instantiate(Barracks, pathfinding.grid.GetGridCenterPosition(x, y),Quaternion.identity);
             pathfinding.GetNode(x, y).SetIsWalkable(!pathfinding.GetNode(x,y).isWalkable);
         }
     }
@@ -48,64 +52,6 @@ public class Testing : MonoBehaviour
         Vector3 worldPosition = worldCamera.ScreenToWorldPoint(screenPosition);
         return worldPosition;
     }
-    /*
-    GridMap<GridMapObject> grid;
-
-    private void Start()
-    {
-        grid = new GridMap<GridMapObject>(6,2,5f,new Vector3(-15,-8),(GridMap<GridMapObject> g,int x,int y)=> new GridMapObject(g,x,y));
-
-       /* List<bool> boolList=new List<bool>();
-        List<int> intList=new List<int>();*/
-    /*  }
-      public void Update()
-      {
-          Vector3 position = GetMouseWorldPosition();
-
-          if (Input.GetMouseButtonDown(0))
-          {
-              GridMapObject gridmapObject= grid.GetGridObject(position);
-              if (gridmapObject!=null)
-              {
-                  gridmapObject.AddValue(5);
-              }
-          }
-      }
-
-    
-
-      public class GridMapObject 
-      {
-          private const int MIN = 0;
-          private const int MAX = 100;
-
-          private GridMap<GridMapObject> grid;
-          private int x;
-          private int y;
-          private int value;
-
-
-          public GridMapObject(GridMap<GridMapObject> grid,int x,int y) 
-          {
-              this.x= x;
-              this.y= y;
-              this.grid = grid;
-          }
-          public void AddValue(int addValue) 
-          {
-              value += addValue;
-              value=Mathf.Clamp(value,MIN,MAX);
-              grid.TriggerGridObjectChanged(x,y);
-          }
-
-          public float GetValueNormalized() 
-          {
-              return (float)value / MAX;
-          }
-
-          public override string ToString()
-          {
-              return value.ToString();
-          }
-      }*/
 }
+
+
