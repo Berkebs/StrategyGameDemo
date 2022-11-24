@@ -108,10 +108,8 @@ public class GridMap<TGridObject>
 
     public void TriggerGridObjectChanged(int x,int y) 
     {
-        if (onGridObjectChanged != null)
-        {
-            onGridObjectChanged(this, new OnGridObjectChangedEventArgs { x = x, y = y });
-        }
+        if (onGridObjectChanged != null) onGridObjectChanged(this, new OnGridObjectChangedEventArgs { x = x, y = y });
+
     }
 
     public void SetGridObject(Vector3 worldPosition,TGridObject value) 
