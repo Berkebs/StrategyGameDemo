@@ -65,18 +65,16 @@ public class GridMap<TGridObject>
     {
         return width;
     }
-
     public int GetHeight()
     {
         return height;
     }
-
     public float GetCellSize()
     {
         return cellSize;
     }
 
-    private Vector3 GetWorldPosition(int x, int y)
+    public Vector3 GetWorldPosition(int x, int y)
     {
         return new Vector3(x,y) * cellSize+originPosition;
     }
@@ -108,7 +106,8 @@ public class GridMap<TGridObject>
 
     public void TriggerGridObjectChanged(int x,int y) 
     {
-        if (onGridObjectChanged != null) onGridObjectChanged(this, new OnGridObjectChangedEventArgs { x = x, y = y });
+        if (onGridObjectChanged != null) 
+            onGridObjectChanged(this, new OnGridObjectChangedEventArgs { x = x, y = y });
 
     }
 

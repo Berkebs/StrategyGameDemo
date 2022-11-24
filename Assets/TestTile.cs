@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class TestTile : MonoBehaviour
 {
+    [SerializeField] private TilemapVisual tilemapVisual;
     private Tilemap tilemap;
+    
     // Start is called before the first frame update
     void Start()
     {
         tilemap = new Tilemap(20, 10, 10f, Vector3.zero);
 
+        tilemap.SetTilemapVisual(tilemapVisual);
     }
 
     // Update is called once per frame

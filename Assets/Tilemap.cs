@@ -18,6 +18,10 @@ public class Tilemap
             tilemapobject.SetTilemapSprite(tilemapSprite);
         }
     }
+    public void SetTilemapVisual(TilemapVisual tilemapVisual)
+    {
+        tilemapVisual.SetGrid(grid);
+    }
 
     public class TileMapObject
     {
@@ -47,6 +51,14 @@ public class Tilemap
 
 
         }
+
+
+        public TilemapSprite GetTilemapSprite() 
+        {
+            return tilemapSprite;
+        }
+
+
 
         public override string ToString()
         {
