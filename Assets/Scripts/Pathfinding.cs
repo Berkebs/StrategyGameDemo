@@ -15,9 +15,6 @@ public class Pathfinding
     public Pathfinding(int width, int height,float cellSize,Vector3 gridOrigin)
     {
         Instance = this;
-
-
-
         grid = new GridSystem<PathNode>(width, height, cellSize, gridOrigin, (GridSystem<PathNode> g, int x, int y) => new PathNode(g, x, y));
     }
 
@@ -40,7 +37,10 @@ public class Pathfinding
             List<Vector3> vectorPath = new List<Vector3>();
             foreach (PathNode pathNode in path)
             {
-                vectorPath.Add(new Vector3(pathNode.x, pathNode.y) * grid.GetCellSize() + Vector3.one * grid.GetCellSize() * .5f);
+                Debug.Log(pathNode.x+" "+pathNode.y);
+                vectorPath.Add(grid.GetWorldPosition(pathNode.x, pathNode.y));
+
+                Debug.Log(grid.GetWorldPosition(pathNode.x, pathNode.y));
             }
             return vectorPath;
         }
@@ -138,7 +138,6 @@ public class Pathfinding
     {
         return grid.GetGridObject(x, y);
     }
-
 
     private List<PathNode> CalculatePath(PathNode endNode)
     {

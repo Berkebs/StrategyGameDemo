@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using UnityEngine;
 using static BuildingSystem;
 
@@ -35,26 +36,6 @@ public class GridSystem<TGridObject>
             }
         }
 
-        bool showDebug = true;
-        if (showDebug)
-        {
-            TextMesh[,] debugTextArray = new TextMesh[width, height];
-
-            for (int x = 0; x < gridArray.GetLength(0); x++)
-            {
-                for (int y = 0; y < gridArray.GetLength(1); y++)
-                {
-                    Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 1000f);
-                    Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 1000f);
-                }
-            }
-            Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
-            Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
-
-            onGridObjectChanged += (object sender, OnGridObjectChangedEventArgs eventArgs) => {
-                debugTextArray[eventArgs.x, eventArgs.y].text = gridArray[eventArgs.x, eventArgs.y]?.ToString();
-            };
-        }
 
 
 
@@ -72,12 +53,30 @@ public class GridSystem<TGridObject>
         return cellSize;
     }
 
+    public Vector3 GetOriginPos() 
+    {
+        return originPosition;
+    }
+
     public Vector3 GetWorldPosition(int x, int y)
     {
         return new Vector3(x, y) * cellSize + originPosition;
     }
 
+    public List<Vector3> GetAllPositions() 
+    {
+        List<Vector3> positions = new List<Vector3>();
 
+        for (int x = 0; x < gridArray.GetLength(0); x++)
+        {
+            for (int y = 0; y < gridArray.GetLength(1); y++)
+            {
+                positions.Add(GetWorldPosition(x,y));
+            }
+        }
+
+        return positions;
+    }
 
     public void GetXY(Vector3 worldPosition, out int x, out int y)
     {
@@ -129,5 +128,4 @@ public class GridSystem<TGridObject>
         GetXY(worldPosition, out x, out y);
         return GetGridObject(x, y);
     }
-
 }
