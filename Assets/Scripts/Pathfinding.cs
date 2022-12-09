@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Pathfinding
 {
-    private const int MOVE_STRAÝGHT_COST = 10;
+    private const int MOVE_STRAIGHT_COST = 10;
     private const int MOVE_DIAGONAL_COST = 14;
 
     public static Pathfinding Instance { get; private set; }
@@ -158,7 +158,7 @@ public class Pathfinding
         int xDistance = Mathf.Abs(start.x - end.x);
         int yDistance = Mathf.Abs(start.y - end.y);
         int remaining = Mathf.Abs(xDistance - yDistance);
-        return MOVE_DIAGONAL_COST * Mathf.Min(xDistance, yDistance) + MOVE_STRAÝGHT_COST * remaining;
+        return MOVE_DIAGONAL_COST * Mathf.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
 
     }
 
