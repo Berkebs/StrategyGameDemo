@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
 using static BuildingSystem;
 
@@ -9,14 +10,19 @@ public class GameManager : MonoBehaviour
     private GridSystem<GridObject> buildgrid;
     private GridSystem<PathNode> nodeGrid;
 
+    //public UIManager UIManager;
     private Pathfinding pathfinding;
     private BuildingSystem buildingSystem;
-
+    private ObjectPool objectPool;
+    Soldier SelectedSoldier;
+  
     [SerializeField] private List<BuildingSO> BuildingList;
+    private BuildingSO buildingSO;
     [SerializeField] GameObject GroundPrefab;
     [SerializeField] private Soldier Soldier;
-
     Camera camera;
+
+
     private void Awake()
     {
         camera = Camera.main;
@@ -33,14 +39,8 @@ public class GameManager : MonoBehaviour
 
         pathfinding = new Pathfinding(gridWidth, gridHeight, cellSize, GridOrigin);
         buildingSystem = new BuildingSystem(gridWidth, gridHeight, cellSize, GridOrigin,BuildingList);
-
+        objectPool = ObjectPool.Instance;
         InstantiateGround(pathfinding.GetGrid().GetAllPositions());
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
     }
 
     private void Update()
@@ -48,24 +48,61 @@ public class GameManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 mousePosition = GetMouseWorldPosition();
-            buildingSystem.InstanceBuild(mousePosition);
+            if (buildingSO!=null)
+            {
+                buildingSystem.InstanceBuild(mousePosition,buildingSO);
+                buildingSO= null;
+            }
+            else
+            {
+                RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
+                if (hit.collider != null)
+                {
+                    switch (hit.collider.tag)
+                    {
+                        case "Soldier":
+                            SelectedSoldier = hit.collider.GetComponent<Soldier>();
+                            break;
+                        case "Build":
+                            hit.collider.GetComponent<BuildObject>().OnClick();
+                            break;
+                    }
+                }
+            }
+
         }
         if (Input.GetMouseButtonDown(1))
         {
-            Vector3 mousePosition = GetMouseWorldPosition();
-            buildingSystem.DestroyBuild(mousePosition);
+            if (SelectedSoldier!=null)
+            {
+                Vector3 mousePosition = GetMouseWorldPosition();
+                RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
+                if (hit.collider!=null&&hit.collider.GetComponent<IAttackableObject>()!=null)
+                {
+                    SelectedSoldier.SetTarget(hit.collider.GetComponent<IAttackableObject>());
+                }
+                else
+                {
+                    SelectedSoldier.SetTargetPosition(mousePosition);
+                }
+            }
+            //buildingSystem.DestroyBuild(mousePosition);
         }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            buildingSystem.SelectBuild(0);
+            buildingSO = BuildingList[0];
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            buildingSystem.SelectBuild(1);
+            buildingSO = BuildingList[1];
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             Soldier.SetTargetPosition(GetMouseWorldPosition());
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            objectPool.SpawnObject(ObjectTypes.SoldierA,Vector3.zero);
         }
     }
 

@@ -31,7 +31,6 @@ public class PathNode
     public void SetIsWalkable(bool isWalkable)
     {
         this.isWalkable = isWalkable;
-        Debug.LogError(this.x + " " + this.y + " " + this.isWalkable);
 
         grid.TriggerGridObjectChanged(x, y);
     }

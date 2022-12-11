@@ -14,6 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BuildName: Barrack
   prefab: {fileID: 3485024166378066577, guid: c1d0a3f1b306345449d518cce60389ec, type: 3}
-  visual: {fileID: 0}
   width: 4
   height: 4
+  BuildHP: 100
+  ObjectType: 0
+  InstantiableSoldiers:
+  - {fileID: 3879843534266467081, guid: 39e72fce98f550240ab642fa6ff8bffd, type: 3}
+  - {fileID: 8809986866070392035, guid: edf7dc9f0dfe726438fbc985c00053aa, type: 3}
+  - {fileID: 1397768890004569168, guid: 786fb58f622aa7e4c8cd71eb63d8730b, type: 3}

@@ -11,7 +11,8 @@ public class BuildingSO : ScriptableObject
     public int width;
     public int height;
     public int BuildHP;
-
+    public ObjectTypes ObjectType;
+    public List<Soldier> InstantiableSoldiers;
 
     public List<Vector2Int> GetGridPositionList(Vector2Int offset)
     {

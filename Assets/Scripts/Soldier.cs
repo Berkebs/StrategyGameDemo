@@ -8,6 +8,8 @@ public class Soldier : MonoBehaviour
 
     private int currentPathIndex;
     private List<Vector3> pathVectorList;
+    public SoldierSO soldierSO;
+    public ObjectTypes ObjectType;
 
     private void Update()
     {
@@ -58,5 +60,11 @@ public class Soldier : MonoBehaviour
 
             pathVectorList.RemoveAt(0);
         }
+    }
+    public void SetTarget( IAttackableObject AttackObject)
+    {
+        SetTargetPosition(AttackObject.GetPosition());
+        AttackObject.TakeDamage(120);
+
     }
 }

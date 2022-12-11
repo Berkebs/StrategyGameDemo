@@ -3,39 +3,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildingSystem : MonoBehaviour
+public class BuildingSystem
 {
 
     public static BuildingSystem Instance { get; private set; }
 
 
-    public event EventHandler OnSelectedChanged;
-    public event EventHandler OnObjectPlaced;
+    //public event EventHandler OnSelectedChanged;
+    //public event EventHandler OnObjectPlaced;
 
-    private List<BuildingSO> BuildingList;
-    private BuildingSO BuildingSO;
+    //private List<BuildingSO> BuildingList;
+    //private BuildingSO BuildingSO;
 
     private GridSystem<GridObject> buildgrid;
-    private GridSystem<PathNode> nodeGrid;
+    //private GridSystem<PathNode> nodeGrid;
+
 
     public BuildingSystem(int width, int height, float cellSize, Vector3 gridOrigin,List<BuildingSO> Builds) 
     {
 
         Instance = this;
         buildgrid = new GridSystem<GridObject>(width, height, cellSize, gridOrigin, (GridSystem<GridObject> g, int x, int y) => new GridObject(g, x, y));
-        BuildingList= Builds;
-        BuildingSO = null;
+        //BuildingList= Builds;
+      //  BuildingSO = null;
+
 
     }
 
  
 
-    public void SelectBuild(int BuildIndex)
-    {
-        Debug.Log(BuildingList[BuildIndex]);
-        BuildingSO = BuildingList[BuildIndex];
-        RefreshSelectedObjectType();
-    }
+
     public class GridObject
     {
         private GridSystem<GridObject> grid;
@@ -66,76 +63,78 @@ public class BuildingSystem : MonoBehaviour
         {
             return buildObject == null;
         }
-        public override string ToString()
-        {
-            return x + "," + y + "\n" + buildObject;
-        }
     }
 
-    public void InstanceBuild(Vector3 mousePosition) 
+    public void InstanceBuild(Vector3 mousePosition,BuildingSO buildingSO) 
     {
-        if (BuildingSO!=null)
-        {
-            buildgrid.GetXY(mousePosition, out int x, out int y);
 
-            Vector2Int placedObjectOrigin = new Vector2Int(x, y);
-            List<Vector2Int> gridPositionList = BuildingSO.GetGridPositionList(placedObjectOrigin);
-            bool canBuild = true;
+        buildgrid.GetXY(mousePosition, out int x, out int y);
+
+        Vector2Int placedObjectOrigin = new Vector2Int(x, y);
+        List<Vector2Int> gridPositionList = buildingSO.GetGridPositionList(placedObjectOrigin);
+        bool canBuild = true;
+        foreach (Vector2Int gridPosition in gridPositionList)
+        {
+            if (!buildgrid.GetGridObject(gridPosition.x, gridPosition.y).CanBuild())
+            {
+                canBuild = false;
+                break;
+            }
+        }
+        if (canBuild)
+        {
+            BuildObject buildObject = BuildObject.Create(buildgrid.GetWorldPosition(x, y), new Vector2Int(x, y), buildingSO);
+           // Vector3 buildObjectWorldPosition = buildgrid.GetWorldPosition(placedObjectOrigin.x, placedObjectOrigin.y);
             foreach (Vector2Int gridPosition in gridPositionList)
             {
-                if (!buildgrid.GetGridObject(gridPosition.x, gridPosition.y).CanBuild())
-                {
-                    canBuild = false;
-                    break;
-                }
+                buildgrid.GetGridObject(gridPosition.x, gridPosition.y).SetBuildObject(buildObject);
+                SetGridNodeWalkable(gridPosition, false);
             }
-            if (canBuild)
-            {
-                Debug.Log(BuildingSO);
-                BuildObject buildObject = BuildObject.Create(buildgrid.GetWorldPosition(x, y), new Vector2Int(x, y), BuildingSO);
-                Vector3 buildObjectWorldPosition = buildgrid.GetWorldPosition(placedObjectOrigin.x, placedObjectOrigin.y);
-                foreach (Vector2Int gridPosition in gridPositionList)
-                {
-                    buildgrid.GetGridObject(gridPosition.x, gridPosition.y).SetBuildObject(buildObject);
-                    SetGridNodeWalkable(gridPosition, false);
-                }
-                OnObjectPlaced?.Invoke(this, EventArgs.Empty);
-                DeselectObjectType();
-            }
-            else
-            {
-                Debug.LogError("Cannot Build Here!!!");
-            }
+            //OnObjectPlaced?.Invoke(this, EventArgs.Empty);
+            // DeselectObjectType();
         }
+        else
+        {
+            Debug.LogError("Cannot Build Here!!!");
+        }
+        
     }
-    public void DestroyBuild(Vector3 mousePosition) 
+    public void DestroyBuild(Vector2Int BuildOrigin) 
     {
-        if (buildgrid.GetGridObject(mousePosition) != null)
+        if (buildgrid.GetGridObject(BuildOrigin.x,BuildOrigin.y) != null)
         {
             // Valid Grid Position
-            BuildObject placedObject = buildgrid.GetGridObject(mousePosition).GetBuildObject();
+            BuildObject placedObject = buildgrid.GetGridObject(BuildOrigin.x,BuildOrigin.y).GetBuildObject();
             if (placedObject != null)
             {
-                // Demolish
-                placedObject.DestroySelf();
+               
 
                 List<Vector2Int> gridPositionList = placedObject.GetGridPositionList();
                 foreach (Vector2Int gridPosition in gridPositionList)
                 {
                     buildgrid.GetGridObject(gridPosition.x, gridPosition.y).ClearBuildObject();
+                    SetGridNodeWalkable(gridPosition, true);
                 }
+
+                // Demolish
+                placedObject.DestroySelf();
+            }
+            else
+            {
+                Debug.LogError("Null Object");
+
             }
         }
     }
+
     void SetGridNodeWalkable(Vector2Int mousePosition,bool isWalkable) 
     {
         Pathfinding.Instance.GetGrid().GetGridObject(mousePosition.x, mousePosition.y).SetIsWalkable(isWalkable);
     }
 
 
-   /* public Vector3 GetMouseWorldSnappedPosition()
+  /*  public Vector3 GetMouseWorldSnappedPosition(Vector3 mousePosition)
     {
-        Vector3 mousePosition = GetMouseWorldPosition();
         buildgrid.GetXY(mousePosition, out int x, out int y);
 
         if (BuildingSO != null)
@@ -150,16 +149,16 @@ public class BuildingSystem : MonoBehaviour
             return mousePosition;
         }
     }*/
-    private void DeselectObjectType()
+  /*  private void DeselectObjectType()
     {
         BuildingSO = null; 
         RefreshSelectedObjectType();
-    }
+    }*/
 
-    private void RefreshSelectedObjectType()
+   /* private void RefreshSelectedObjectType()
     {
         OnSelectedChanged?.Invoke(this, EventArgs.Empty);
-    }
+    }*/
 
 
     public Vector2Int GetGridPosition(Vector3 worldPosition)
@@ -168,8 +167,13 @@ public class BuildingSystem : MonoBehaviour
         return new Vector2Int(x, y);
     }
 
-    public BuildingSO GetPlacedObjectTypeSO()
+    public Vector3 GetGridWorldPosition(Vector2Int ObjectOrigin) 
+    {
+        return buildgrid.GetWorldPosition(ObjectOrigin.x,ObjectOrigin.y);
+    }
+
+  /*  public BuildingSO GetPlacedObjectTypeSO()
     {
         return BuildingSO;
-    }
+    }*/
 }

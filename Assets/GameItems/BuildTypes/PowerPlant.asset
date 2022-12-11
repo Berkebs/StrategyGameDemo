@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BuildName: PowerPlant
   prefab: {fileID: 6107591162335321621, guid: 427a09325db051544a8887ff257e3403, type: 3}
-  visual: {fileID: 0}
   width: 2
   height: 3
+  BuildHP: 50
+  ObjectType: 1
+  InstantiableSoldiers: []
