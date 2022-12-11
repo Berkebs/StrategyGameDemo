@@ -7,13 +7,10 @@ using static BuildingSystem;
 
 public class GameManager : MonoBehaviour
 {
-    private GridSystem<GridObject> buildgrid;
-    private GridSystem<PathNode> nodeGrid;
 
-    //public UIManager UIManager;
+    public static GameManager Instance;
     private Pathfinding pathfinding;
     private BuildingSystem buildingSystem;
-    private ObjectPool objectPool;
     Soldier SelectedSoldier;
 
     
@@ -21,7 +18,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<BuildingSO> BuildingList;
     private BuildingSO buildingSO;
     [SerializeField] GameObject GroundPrefab;
-    [SerializeField] private Soldier Soldier;
 
 
     Camera camera;
@@ -30,7 +26,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         camera = Camera.main;
-
+        Instance= this;
         Vector3 GridOrigin = camera.ScreenToWorldPoint(new Vector3(0, 0, camera.nearClipPlane));
         Vector3 CameraTopLeft = camera.ScreenToWorldPoint(new Vector3(0, camera.pixelHeight, camera.nearClipPlane));
         Vector3 CameraBottomRight = camera.ScreenToWorldPoint(new Vector3(camera.pixelWidth, 0, camera.nearClipPlane));
@@ -43,12 +39,17 @@ public class GameManager : MonoBehaviour
 
         pathfinding = new Pathfinding(gridWidth, gridHeight, cellSize, GridOrigin);
         buildingSystem = new BuildingSystem(gridWidth, gridHeight, cellSize, GridOrigin,BuildingList);
-        objectPool = ObjectPool.Instance;
         InstantiateGround(pathfinding.GetGrid().GetAllPositions());
     }
 
     private void Update()
     {
+        if (buildingSO!=null)
+        {
+            
+        }
+
+
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 mousePosition = GetMouseWorldPosition();
@@ -66,6 +67,8 @@ public class GameManager : MonoBehaviour
                     {
                         case "Soldier":
                             SelectedSoldier = hit.collider.GetComponent<Soldier>();
+                            UIManager.Instance.DeselectBarrack();
+
                             break;
                         case "Build":
                             hit.collider.GetComponent<BuildObject>().OnClick();
@@ -90,23 +93,6 @@ public class GameManager : MonoBehaviour
                     SelectedSoldier.SetTargetPosition(mousePosition);
                 }
             }
-            //buildingSystem.DestroyBuild(mousePosition);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            buildingSO = BuildingList[0];
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            buildingSO = BuildingList[1];
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            Soldier.SetTargetPosition(GetMouseWorldPosition());
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            objectPool.SpawnObject(ObjectTypes.SoldierA,Vector3.zero);
         }
     }
 
@@ -126,5 +112,15 @@ public class GameManager : MonoBehaviour
         Vector3 vec = camera.ScreenToWorldPoint(Input.mousePosition);
         vec.z = 0;
         return vec;
+    }
+
+    public void SetSelectedBuilding(BuildingSO SelectedBuildingSO) 
+    {
+        buildingSO = SelectedBuildingSO;
+    }
+
+    public List<BuildingSO> GetBuildingList() 
+    {
+        return BuildingList;
     }
 }

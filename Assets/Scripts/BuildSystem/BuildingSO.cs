@@ -8,6 +8,7 @@ public class BuildingSO : ScriptableObject
 
     public string BuildName;
     public Transform prefab;
+    public GameObject BuildUIPrefab; 
     public int width;
     public int height;
     public int BuildHP;

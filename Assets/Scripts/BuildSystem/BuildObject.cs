@@ -69,6 +69,6 @@ public class BuildObject : MonoBehaviour,IAttackableObject
     }
     public Vector3 GetPosition()
     {
-        return BuildingSystem.Instance.GetGridWorldPosition(origin);
+        return InstantiateObjectPos;
     }
 }

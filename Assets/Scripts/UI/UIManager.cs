@@ -7,26 +7,47 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
-    public List<BarrackEventButton> BarrackPanelButtons;
+    private List<InformationEventButton> BarrackPanelButtons;
     public TextMeshProUGUI SelectedObjectTitle;
     public Image SelectedObjectIcon;
-    public GameObject BarrackPanelContainer,BarrackPanel;
+    public GameObject SoldierPanelContainer,InformationPanel;
+
+
+    
+    private List<BuildingSO> BuildingList;
+    public Transform BuildListContainer;
 
     private void Awake()
     {
         Instance = this;
-        BarrackPanelButtons = new List<BarrackEventButton>();
-        for (int i = 0; i < BarrackPanelContainer.transform.childCount; i++)
+        BarrackPanelButtons = new List<InformationEventButton>();
+        for (int i = 0; i < SoldierPanelContainer.transform.childCount; i++)
         {
-            BarrackPanelButtons.Add(BarrackPanelContainer.transform.GetChild(i).GetComponent<BarrackEventButton>());
-
+            BarrackPanelButtons.Add(SoldierPanelContainer.transform.GetChild(i).GetComponent<InformationEventButton>());
         }
-        BarrackPanel.SetActive(false);
+        InformationPanel.SetActive(false);
+        BuildingList=GameManager.Instance.GetBuildingList();
+        CreateBuildListUI();
+    }
+
+    void CreateBuildListUI() 
+    {
+        for (int multiplier = 0; multiplier < 10; multiplier++)
+        {
+            for (int i = 0; i < BuildingList.Count; i++)
+            {
+                GameObject BuildButton = Instantiate(BuildingList[i].BuildUIPrefab, BuildListContainer);
+                BuildButton.GetComponent<BuildButtonUI>().SetBuild(BuildingList[i]);
+            }
+        }
 
     }
+
+
+
     public void SelectBarrack(BuildObject SelectedObject)
     {
-        BarrackPanel.SetActive(true);
+        InformationPanel.SetActive(true);
         int InstSoldierCount = SelectedObject.BuildObjectSO.InstantiableSoldiers.Count;
         for (int i = 0; i < BarrackPanelButtons.Count; i++)
         {
@@ -47,6 +68,6 @@ public class UIManager : MonoBehaviour
 
     public void DeselectBarrack() 
     {
-        BarrackPanel.SetActive(false);
+        InformationPanel.SetActive(false);
     }
 }

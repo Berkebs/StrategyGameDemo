@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Barrack
   m_EditorClassIdentifier: 
   BuildName: Barrack
-  prefab: {fileID: 3485024166378066577, guid: c1d0a3f1b306345449d518cce60389ec, type: 3}
+  prefab: {fileID: 5209696874606777305, guid: 73b482fa905d05e439f46dcbd4f76553, type: 3}
+  BuildUIPrefab: {fileID: 1375624782238640602, guid: 7fed734ab316bad4db793e7e25da7844, type: 3}
   width: 4
   height: 4
   BuildHP: 100
