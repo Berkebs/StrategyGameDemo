@@ -9,6 +9,8 @@ public class BuildObject : MonoBehaviour,IAttackableObject
     private Vector2 InstantiateObjectPos;
     int MaxHealth;
     int CurrentHealth;
+    public Transform HealthBarSprite;
+
     public static BuildObject Create(Vector3 worldPosition, Vector2Int origin, BuildingSO BuildSO)
     {
         GameObject BuildObjectTransform = ObjectPool.Instance.SpawnObject(BuildSO.ObjectType,worldPosition);
@@ -18,7 +20,6 @@ public class BuildObject : MonoBehaviour,IAttackableObject
         buildObject.BuildObjectSO = BuildSO;
         buildObject.origin = origin;
         buildObject.MaxHealth= buildObject.CurrentHealth = BuildSO.BuildHP;
-        Debug.Log("Create");
         return buildObject;
     }
     public List<Vector2Int> GetGridPositionList()
@@ -36,7 +37,6 @@ public class BuildObject : MonoBehaviour,IAttackableObject
     {
 
         UIManager.Instance.SelectBarrack(this);
-        TakeDamage(35);
     }
 
     
@@ -46,18 +46,27 @@ public class BuildObject : MonoBehaviour,IAttackableObject
         ObjectPool.Instance.SpawnObject(ObjectType, InstantiateObjectPos);
     }
 
-    public void TakeDamage(int Damage) 
+    public void SetBar(float SetValue)
+    {
+        HealthBarSprite.localScale = new Vector3(SetValue, HealthBarSprite.localScale.y,HealthBarSprite.localScale.z);
+    }
+
+    public bool TakeDamage(int Damage) 
     {
         CurrentHealth -= Damage;
-        Debug.Log("HP : " + CurrentHealth);
-
+        SetBar((float)CurrentHealth/MaxHealth);
         if (CurrentHealth<=0)
         {
 
             BuildingSystem.Instance.DestroyBuild(origin);
+            return true;
         }
+        return false;
     }
-
+    public int GetCurrentHP() 
+    {
+        return CurrentHealth;
+    }
     public Vector3 GetPosition()
     {
         return BuildingSystem.Instance.GetGridWorldPosition(origin);

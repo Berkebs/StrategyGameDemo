@@ -4,6 +4,7 @@ using UnityEngine;
 
 public interface IAttackableObject 
 {
-   Vector3 GetPosition();
-    void TakeDamage(int Damage);
+    Vector3 GetPosition();
+    bool TakeDamage(int Damage);
+    int GetCurrentHP();
 }

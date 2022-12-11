@@ -37,10 +37,8 @@ public class Pathfinding
             List<Vector3> vectorPath = new List<Vector3>();
             foreach (PathNode pathNode in path)
             {
-                Debug.Log(pathNode.x+" "+pathNode.y);
-                vectorPath.Add(grid.GetWorldPosition(pathNode.x, pathNode.y));
+                vectorPath.Add(grid.GetWorldPositionGridCenter(pathNode.x, pathNode.y));
 
-                Debug.Log(grid.GetWorldPosition(pathNode.x, pathNode.y));
             }
             return vectorPath;
         }
@@ -78,9 +76,11 @@ public class Pathfinding
 
         while (openList.Count > 0)
         {
+
             PathNode currentNode = GetLowestFCostNode(openList);
             if (currentNode == endNode)
             {
+
                 return CalculatePath(endNode);
             }
 
@@ -92,6 +92,7 @@ public class Pathfinding
                 if (closedList.Contains(neighbourNode)) continue;
                 if (!neighbourNode.isWalkable)
                 {
+                   
                     closedList.Add(neighbourNode);
                     continue;
                 }

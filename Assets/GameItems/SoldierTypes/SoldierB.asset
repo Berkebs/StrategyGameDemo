@@ -15,3 +15,4 @@ MonoBehaviour:
   MovementSpeed: 40
   SoldierDamage: 5
   SoldierHP: 10
+  SoldierAttackRate: 1

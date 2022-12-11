@@ -15,11 +15,15 @@ public class GameManager : MonoBehaviour
     private BuildingSystem buildingSystem;
     private ObjectPool objectPool;
     Soldier SelectedSoldier;
+
+    
   
     [SerializeField] private List<BuildingSO> BuildingList;
     private BuildingSO buildingSO;
     [SerializeField] GameObject GroundPrefab;
     [SerializeField] private Soldier Soldier;
+
+
     Camera camera;
 
 
@@ -77,7 +81,7 @@ public class GameManager : MonoBehaviour
             {
                 Vector3 mousePosition = GetMouseWorldPosition();
                 RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
-                if (hit.collider!=null&&hit.collider.GetComponent<IAttackableObject>()!=null)
+                if (hit.collider!=null&&hit.collider.GetComponent<IAttackableObject>()!=null&&hit.collider.GetComponent<Soldier>()!=SelectedSoldier)
                 {
                     SelectedSoldier.SetTarget(hit.collider.GetComponent<IAttackableObject>());
                 }
@@ -114,7 +118,6 @@ public class GameManager : MonoBehaviour
         {
             Instantiate(GroundPrefab,pos,Quaternion.identity,GroundParent.transform);
         }
-
     }
 
 

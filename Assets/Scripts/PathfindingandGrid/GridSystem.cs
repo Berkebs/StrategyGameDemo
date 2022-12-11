@@ -62,7 +62,12 @@ public class GridSystem<TGridObject>
     {
         return new Vector3(x, y) * cellSize + originPosition;
     }
+    public Vector3 GetWorldPositionGridCenter(int x,int y) 
+    {
+        Vector3 WorldPos=GetWorldPosition(x, y);
+        return new Vector3(WorldPos.x+cellSize, WorldPos.y+cellSize);
 
+    }
     public List<Vector3> GetAllPositions() 
     {
         List<Vector3> positions = new List<Vector3>();
