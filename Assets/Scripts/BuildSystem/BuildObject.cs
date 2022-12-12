@@ -11,6 +11,7 @@ public class BuildObject : MonoBehaviour,IAttackableObject
     int CurrentHealth;
     public Transform HealthBarSprite;
 
+    //Create Build Object
     public static BuildObject Create(Vector3 worldPosition, Vector2Int origin, BuildingSO BuildSO)
     {
         GameObject BuildObjectTransform = ObjectPool.Instance.SpawnObject(BuildSO.ObjectType,worldPosition);
@@ -33,19 +34,22 @@ public class BuildObject : MonoBehaviour,IAttackableObject
         this.gameObject.SetActive(false);
     }
 
+    //Get Information Panel
     public void OnClick()
     {
-
         UIManager.Instance.SelectBarrack(this);
     }
-
-    
-
     public void CreateObject(ObjectTypes ObjectType) 
     {
         ObjectPool.Instance.SpawnObject(ObjectType, InstantiateObjectPos);
     }
+    public Vector3 GetPosition()
+    {
+        return InstantiateObjectPos;
+    }
 
+
+    //Health System
     public void SetBar(float SetValue)
     {
         HealthBarSprite.localScale = new Vector3(SetValue, HealthBarSprite.localScale.y,HealthBarSprite.localScale.z);
@@ -67,8 +71,5 @@ public class BuildObject : MonoBehaviour,IAttackableObject
     {
         return CurrentHealth;
     }
-    public Vector3 GetPosition()
-    {
-        return InstantiateObjectPos;
-    }
+
 }

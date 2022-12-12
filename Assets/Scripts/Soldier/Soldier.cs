@@ -28,7 +28,6 @@ public class Soldier : MonoBehaviour,IAttackableObject
 
             foreach (Collider2D FindEnemy in FindEnemies)
             {
-                Debug.Log(this.gameObject.name + " " + FindEnemy.name);
 
                 if (FindEnemy.TryGetComponent(out IAttackableObject Enemy))
                 {
@@ -72,16 +71,17 @@ public class Soldier : MonoBehaviour,IAttackableObject
                 }
             }
         }
-
     }
-
     private void OnEnable()
     {
+        Debug.Log("Enable");
         MovementSpeed = soldierSO.MovementSpeed;
         AttackRate = soldierSO.SoldierAttackRate;
         MaxHealth = CurrentHealth = soldierSO.SoldierHP;
         NextAttackTime = 0;
+        SetBar((float)CurrentHealth / MaxHealth);
     }
+
     private void DestroySelf() 
     {
         this.transform.position = new Vector3(-2000,0);
@@ -113,15 +113,12 @@ public class Soldier : MonoBehaviour,IAttackableObject
     }
     public void SetTarget( IAttackableObject AttackObject)
     {
-        Debug.Log(this.gameObject.name+" "+AttackObject);
         SetTargetPosition(AttackObject.GetPosition());
         TargetAttackableObject = AttackObject;
     }
 
     void Attack() 
     {
-        Debug.Log("aa");
-
         if (TargetAttackableObject.GetCurrentHP() > 0)
         {
             if (TargetAttackableObject.TakeDamage(soldierSO.SoldierDamage))
@@ -151,4 +148,6 @@ public class Soldier : MonoBehaviour,IAttackableObject
     {
         return CurrentHealth;
     }
+
+
 }

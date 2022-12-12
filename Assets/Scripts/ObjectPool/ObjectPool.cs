@@ -33,19 +33,19 @@ public class ObjectPool : MonoBehaviour
 
     public GameObject SpawnObject(ObjectTypes Type,Vector3 spawnPos) 
     {
-          if (!Pools.ContainsKey(Type))
-              return null;
+        if (!Pools.ContainsKey(Type))
+            return null;
 
-          GameObject spawnObject = Pools[Type].Dequeue();
-          spawnObject.SetActive(true);
-          spawnObject.transform.position = spawnPos;
-          spawnObject.transform.rotation = Quaternion.identity;
+        GameObject spawnObject = Pools[Type].Dequeue();
+        spawnObject.SetActive(true);
+        spawnObject.transform.position = spawnPos;
+        spawnObject.transform.rotation = Quaternion.identity;
 
 
-          Pools[Type].Enqueue(spawnObject);
+        Pools[Type].Enqueue(spawnObject);
 
-          return spawnObject;
-    }
+        return spawnObject;
+}
 
 }
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
-using static BuildingSystem;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,6 +17,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<BuildingSO> BuildingList;
     private BuildingSO buildingSO;
     [SerializeField] GameObject GroundPrefab;
+    private GameObject BuildGhost;
+
+
+    [SerializeField] Color CantBuildColor;
+    [SerializeField] Color CanBuildColor;
 
 
     Camera camera;
@@ -44,9 +48,9 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (buildingSO!=null)
+        if (buildingSO != null)
         {
-            
+            GetGhost();
         }
 
 
@@ -56,7 +60,11 @@ public class GameManager : MonoBehaviour
             if (buildingSO!=null)
             {
                 buildingSystem.InstanceBuild(mousePosition,buildingSO);
-                buildingSO= null;
+
+                if (BuildGhost != null)
+                {
+                    DisableGhost(BuildGhost);
+                }
             }
             else
             {
@@ -93,6 +101,10 @@ public class GameManager : MonoBehaviour
                     SelectedSoldier.SetTargetPosition(mousePosition);
                 }
             }
+            else if (BuildGhost!=null)
+            {
+                DisableGhost(BuildGhost);
+            }
         }
     }
 
@@ -106,6 +118,46 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void GetGhost() 
+    {    
+        Vector3 mousePosition = GetMouseWorldPosition();
+
+        if (BuildGhost != null)
+        {
+            
+            Vector3 targetPosition = GetMouseWorldSnappedPosition(mousePosition);
+
+            BuildGhost.transform.position = Vector3.Lerp(BuildGhost.transform.position, targetPosition, Time.deltaTime * 15f);
+            if (buildingSystem.CanBuild(mousePosition, buildingSO))
+            {
+                BuildGhost.GetComponent<SpriteRenderer>().color = CanBuildColor;
+            }
+            else
+            {
+                BuildGhost.GetComponent<SpriteRenderer>().color = CantBuildColor;
+
+            }
+        }
+        else
+        {
+            BuildGhost = EnableGhost(mousePosition);
+        }
+    }
+
+    GameObject EnableGhost(Vector3 mousePosition) 
+    {
+       return ObjectPool.Instance.SpawnObject(buildingSO.ObjectType, mousePosition);
+    }
+    void DisableGhost(GameObject Ghost) 
+    {
+        Ghost.GetComponent<SpriteRenderer>().color= Color.white;
+        Ghost.transform.position = new Vector3(-2000,0);
+        Ghost.SetActive(false);
+        BuildGhost = null;
+
+        buildingSO = null;
+    }
+
 
     Vector3 GetMouseWorldPosition()
     {
@@ -113,7 +165,12 @@ public class GameManager : MonoBehaviour
         vec.z = 0;
         return vec;
     }
-
+    public Vector3 GetMouseWorldSnappedPosition(Vector3 mousePosition)
+    {
+        BuildingSystem.Instance.buildgrid.GetXY(mousePosition, out int x, out int y);
+        Vector3 placedObjectWorldPosition = BuildingSystem.Instance.buildgrid.GetWorldPosition(x, y);
+        return placedObjectWorldPosition;
+    }
     public void SetSelectedBuilding(BuildingSO SelectedBuildingSO) 
     {
         buildingSO = SelectedBuildingSO;
